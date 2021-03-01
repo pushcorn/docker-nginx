@@ -1,0 +1,22 @@
+#!/bin/bash
+
+describe_command ()
+{
+    echo "Reload the nginx server."
+}
+
+
+describe_command_options ()
+{
+    :
+}
+
+
+run_command ()
+{
+    if nginx -t 2>&1 && nginx -s reload; then
+        qd_info "nginx reloaded"
+    else
+        qd_error "Unable to reload nginx!"
+    fi
+}

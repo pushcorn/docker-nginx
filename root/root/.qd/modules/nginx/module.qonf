@@ -1,0 +1,12 @@
+#? nginx.args:        -g "daemon off;"
+#? nginx.watches:     etc
+
+#[ nginx.watches
+#? $$$.path:
+#? $$$.patterns:
+#? $$$.trigger:       qd nginx:reload
+#]
+
+#[ nginx.watches:     etc
+#? $$$.path:          /etc/nginx
+#]
