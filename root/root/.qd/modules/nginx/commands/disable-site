@@ -1,0 +1,22 @@
+#!/bin/bash
+
+describe_command ()
+{
+    echo "Disable a site."
+}
+
+
+describe_command_options ()
+{
+    qd_describe_command_option "name" "string" "The site name." true
+}
+
+
+run_command ()
+{
+    local config_dir=/etc/nginx
+    local name=$QDC_NAME
+    local file=$config_dir/sites-enabled/$name.conf
+
+    rm -f $file
+}

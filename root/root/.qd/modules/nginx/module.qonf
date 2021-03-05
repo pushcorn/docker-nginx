@@ -1,6 +1,7 @@
 #? nginx.args:        -g "daemon off;"
-#? nginx.watches:     etc
 #? nginx.cpus:        auto
+
+#? nginx.watches:     etc {{nginx.watches.more}}
 
 #[ nginx.watches
 #? $$$.path:
@@ -14,28 +15,24 @@
 
 
 #? nginx.includes.http:
-
-#[ nginx.includes.http:
-#? $$$.path:
-#]
-
 #? nginx.includes.root:
 
-#[ nginx.includes.root:
-#? $$$.path:
+#? nginx.configs: nginx errors {{nginx.configs.more}}
+
+#[ nginx.configs
+#? $$$.template:
+#? $$$.output:
 #]
 
-#? nginx.custom.configs:  nginx errors
-
-#[ nginx.custom.configs   nginx
-#? $$$.template:          nginx:nginx.conf
+#[ nginx.configs  nginx
+#? $$$.template:  nginx:nginx.conf
 #]
 
-#[ nginx.custom.configs   errors
-#? $$$.template:          nginx:error-pages.conf
+#[ nginx.configs  errors
+#? $$$.template:  nginx:error-pages.conf
 #]
 
-#? nginx.sites:           default
+#? nginx.sites:           default {{nginx.sites.more}}
 
 #[ nginx.sites:           default
 #? $$$.default:           true
@@ -54,11 +51,8 @@
 #? $$$.proxy.protocol:    false
 #? $$$.real.ip.from:      127.0.0.1
 #? $$$.cert:              $$.{{domain}}
-
-# headers should be quoted with single-quotes
 #? $$$.headers:
 #? $$$.includes:
-
 #? $$$.https.enabled:     false
 #? $$$.https.redirect:    true
 #? $$$.https.port:        443
@@ -66,4 +60,3 @@
 #? $$$.https.includes:    {{$$$.includes}}
 #? $$$.https.headers:     {{$$$.headers}}
 #]
-

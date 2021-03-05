@@ -2,12 +2,15 @@ op: target string "The target directory." true
 
 le: [ -f "{{target}}/dhparam.pem" ] || openssl dhparam -out {{target}}/dhparam.pem 2048
 le: cp -prf /etc/nginx/* {{target}}/
+le: mount -B {{target}} /etc/nginx
 
-#[ nginx.custom.configs
-lq: render-template --source {{$$$.template}} --namespace qds --output {{target}}/
+#[ nginx.configs
+lq: render-template --source {{$$$.template}} --namespace qds \
+        --output {{target}}/{{$$$.output}}
 #]
 
 #[ nginx.sites
 lq: render-template --source {{$$$.template}} {{!nginx.sites.$$|env_to_data_args}} \
-        --output {{target}}/sites-enabled/$$.conf
+        --output {{target}}/sites-available/$$.conf
+lq: nginx:enable-site --name $$
 #]

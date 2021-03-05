@@ -1,0 +1,22 @@
+#!/bin/bash
+
+describe_command ()
+{
+    echo "Disable a module."
+}
+
+
+describe_command_options ()
+{
+    qd_describe_command_option "name" "string" "The module name." true
+}
+
+
+run_command ()
+{
+    local config_dir=/etc/nginx
+    local name=$QDC_NAME
+    local file=$config_dir/modules-enabled/$name.conf
+
+    rm -f $file
+}

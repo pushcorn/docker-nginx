@@ -6,15 +6,28 @@ describe_command ()
 }
 
 
-describe_command_options ()
-{
-    :
-}
-
-
 run_command ()
 {
-    if nginx -t 2>&1 && nginx -s reload; then
+    unset 'QD_ARGV[0]'
+
+    qd_info "arguments: ${QD_ARGV[@]}"
+
+    local test_result=$(nginx -t 2>&1)
+    local line func
+
+    if [[ "$test_result" =~ successful ]]; then
+        func=qd_info
+    else
+        func=qd_err
+    fi
+
+    while read line
+    do
+      $func "$line"
+    done < <(echo "$test_result")
+
+    if [ "$func" = "qd_info" ]; then
+        nginx -s reload
         qd_info "nginx reloaded"
     else
         qd_error "Unable to reload nginx!"
