@@ -14,17 +14,11 @@ describe_command_options ()
 
 run_command ()
 {
-    if [ -z "$(ls -A /etc/nginx/)" ]; then
-        tar xfz /etc/nginx.tgz -C /etc
-    fi
-
     nginx -V
 
     echo
 
     local name
-
-    qd_list_variables "QDS_"
 
     for name in $QDS_NGINX_WATCHES
     do

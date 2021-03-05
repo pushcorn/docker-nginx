@@ -1,5 +1,6 @@
 #? nginx.args:        -g "daemon off;"
 #? nginx.watches:     etc
+#? nginx.cpus:        auto
 
 #[ nginx.watches
 #? $$$.path:
@@ -10,3 +11,59 @@
 #[ nginx.watches:     etc
 #? $$$.path:          /etc/nginx
 #]
+
+
+#? nginx.includes.http:
+
+#[ nginx.includes.http:
+#? $$$.path:
+#]
+
+#? nginx.includes.root:
+
+#[ nginx.includes.root:
+#? $$$.path:
+#]
+
+#? nginx.custom.configs:  nginx errors
+
+#[ nginx.custom.configs   nginx
+#? $$$.template:          nginx:nginx.conf
+#]
+
+#[ nginx.custom.configs   errors
+#? $$$.template:          nginx:error-pages.conf
+#]
+
+#? nginx.sites:           default
+
+#[ nginx.sites:           default
+#? $$$.default:           true
+#? $$$.fqdn:              {{domain}}
+#? $$$.cert:              {{domain}}
+#]
+
+#[ nginx.sites
+#? $$$.template:          nginx:site-default.conf
+#? $$$.domain:            {{domain}}
+#? $$$.default:           false
+#? $$$.fqdn:              $$.{{domain}}
+#? $$$.port:              80
+#? $$$.root:              /var/www/html
+#? $$$.index:             index.html
+#? $$$.proxy.protocol:    false
+#? $$$.real.ip.from:      127.0.0.1
+#? $$$.cert:              $$.{{domain}}
+
+# headers should be quoted with single-quotes
+#? $$$.headers:
+#? $$$.includes:
+
+#? $$$.https.enabled:     false
+#? $$$.https.redirect:    true
+#? $$$.https.port:        443
+#? $$$.https.http2:       true
+#? $$$.https.includes:    {{$$$.includes}}
+#? $$$.https.headers:     {{$$$.headers}}
+#]
+
