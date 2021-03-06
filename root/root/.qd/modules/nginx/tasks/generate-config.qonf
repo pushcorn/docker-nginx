@@ -1,16 +1,30 @@
-op: target string "The target directory." true
-
-le: [ -f "{{target}}/dhparam.pem" ] || openssl dhparam -out {{target}}/dhparam.pem 2048
-le: cp -prf /etc/nginx/* {{target}}/
-le: mount -B {{target}} /etc/nginx
+le: mount -B /etc/nginx /mnt && umount /etc/nginx
+le: cp -prf /etc/nginx/* /mnt
+le: mount -B /mnt /etc/nginx && umount /mnt
+le: [ -f "/etc/nginx/dhparam.pem" ] || openssl dhparam -out /etc/nginx/dhparam.pem 2048
 
 #[ nginx.configs
-lq: render-template --source {{$$$.template}} --namespace qds \
-        --output {{target}}/{{$$$.output}}
+lq: render-template --source {{$$$.template}} \
+        --output /etc/nginx/{{$$$.output}} \
+        {{!nginx|env_to_data_args}}
 #]
 
 #[ nginx.sites
-lq: render-template --source {{$$$.template}} {{!nginx.sites.$$|env_to_data_args}} \
-        --output {{target}}/sites-available/$$.conf
+lq: render-template --source {{$$$.template}} \
+        --output /etc/nginx/sites-available/$$.conf \
+        {{!nginx.sites.$$|env_to_data_args}}
+
 lq: nginx:enable-site --name $$
+
+if: [ "{{$$$.https.enabled}}" = "true" ] && [ ! -f "/etc/nginx/certs/{{$$$.cert}}.crt" ]
+    le: mkdir -p /etc/nginx/certs && cd /etc/nginx/certs && ls -lFA /etc/nginx/certs
+
+    if: @test .eq $$$.cert {{domain}}
+        lq: openssl:create-cert --name "*.{{domain}}"
+    el:
+        lq: openssl:create-cert --name {{$$$.cert}}
+    fi:
+el:
+    in: Certificate {{$$$.cert}} exists.
+fi:
 #]

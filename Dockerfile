@@ -28,8 +28,9 @@ RUN mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.con
     && mv /var/www/html/index.nginx-debian.html /var/www/html/index.html \
     \
     && qd :install \
-        --module watchman \
+        --command openssl:create-cert \
         --command render-template \
+        --module watchman \
     && qd watchman:install \
     && rm -rf /tmp/*
 

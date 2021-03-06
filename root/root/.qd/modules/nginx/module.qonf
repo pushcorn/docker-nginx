@@ -45,12 +45,12 @@
 #? $$$.domain:            {{domain}}
 #? $$$.default:           false
 #? $$$.fqdn:              $$.{{domain}}
+#? $$$.cert:              {{$$$.fqdn}}
 #? $$$.port:              80
 #? $$$.root:              /var/www/html
 #? $$$.index:             index.html
 #? $$$.proxy.protocol:    false
 #? $$$.real.ip.from:      127.0.0.1
-#? $$$.cert:              $$.{{domain}}
 #? $$$.headers:
 #? $$$.includes:
 #? $$$.https.enabled:     false
