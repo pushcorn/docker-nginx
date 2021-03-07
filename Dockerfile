@@ -34,7 +34,7 @@ RUN mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.con
     && qd watchman:install \
     && rm -rf /tmp/*
 
-COPY root/ /
+COPY .qd /root/.qd
 
 EXPOSE 80 443
 
