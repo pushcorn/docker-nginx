@@ -1,5 +1,13 @@
 #! docker.tag:      pushcorn/nginx
 
+#! watchman.watches:  etc
+
+#[ watchman.watches:  etc
+#? $$$.path:          /etc/nginx
+#? $$$.trigger:       qd nginx:reload
+#]
+
+
 #= docker:build     qd docker:build --tag {{docker.tag}} --context "{{project.dir}}"
 #= docker:exec      qd docker:exec --container {{docker.tag}}
 #= docker:remove    qd docker:remove --name {{docker.tag}}

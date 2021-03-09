@@ -1,19 +1,6 @@
 #? nginx.args:        -g "daemon off;"
 #? nginx.cpus:        auto
 
-#? nginx.watches:     etc {{nginx.watches.more}}
-
-#[ nginx.watches
-#? $$$.path:
-#? $$$.patterns:
-#? $$$.trigger:       qd nginx:reload
-#]
-
-#[ nginx.watches:     etc
-#? $$$.path:          /etc/nginx
-#]
-
-
 #? nginx.includes.http:
 #? nginx.includes.root:
 
@@ -54,9 +41,23 @@
 #? $$$.headers:
 #? $$$.includes:
 #? $$$.https.enabled:     false
+#? $$$.https.hsts:        false
 #? $$$.https.redirect:    true
 #? $$$.https.port:        443
 #? $$$.https.http2:       true
 #? $$$.https.includes:    {{$$$.includes}}
 #? $$$.https.headers:     {{$$$.headers}}
+#]
+
+#? nginx.stream.port:           80
+#? nginx.stream.https.port:     443
+#? nginx.stream.proxy.protocol: false
+
+#? nginx.streams:
+
+#[ nginx.streams
+#? $$$.from:
+#? $$$.to:
+#? $$$.https.from:
+#? $$$.https.to:
 #]

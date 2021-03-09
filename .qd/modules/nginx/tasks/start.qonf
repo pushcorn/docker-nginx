@@ -1,0 +1,2 @@
+le: nginx -V && echo
+le: nginx {{nginx.args}}
