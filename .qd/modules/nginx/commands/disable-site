@@ -9,14 +9,18 @@ describe_command ()
 describe_command_options ()
 {
     qd_describe_command_option "name" "string" "The site name." true
+    qd_describe_command_option "prefix" "string" "The directory prefix." true "$QDS_NGINX_PREFIX"
 }
 
 
 run_command ()
 {
-    local config_dir=/etc/nginx
     local name=$QDC_NAME
-    local file=$config_dir/sites-enabled/$name.conf
+    local file=$QDC_PREFIX/sites-enabled/$name.conf
 
-    rm -f $file
+    if [ -f $file ]; then
+        mv $file $QDC_PREFIX/sites-available/$name.conf
+    else
+        qd_warn "Site '$name' is not enabled."
+    fi
 }

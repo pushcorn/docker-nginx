@@ -9,16 +9,18 @@ describe_command ()
 describe_command_options ()
 {
     qd_describe_command_option "name" "string" "The module name." true
+    qd_describe_command_option "prefix" "string" "The directory prefix." true "$QDS_NGINX_PREFIX"
 }
 
 
 run_command ()
 {
-    local config_dir=/etc/nginx
     local name=$QDC_NAME
-    local file=$config_dir/modules-available/$name.conf
+    local file=$QDC_PREFIX/modules-available/$name.conf
 
-    [ -f "$file" ] || qd_error "The module '$name' is not defined."
-
-    qd_link "$file" "$config_dir/modules-enabled/" true
+    if [ -f "$file" ]; then
+        mv $file $QDC_PREFIX/modules-enabled/$name.conf
+    else
+        qd_error "Module '$name' is not defined."
+    fi
 }

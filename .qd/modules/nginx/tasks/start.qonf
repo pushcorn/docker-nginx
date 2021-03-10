@@ -1,2 +1,16 @@
-le: nginx -V && echo
+#[ .data.dirs: {{nginx.prefix}} /var/www/html
+if: [ -z "$(ls $$)" ]
+    le: mount -B $$ /mnt && umount $$
+    le: cp -prf $$/. /mnt
+    le: mount -B /mnt $$ && umount /mnt
+fi:
+#]
+
+if: [ -f "{{nginx.prefix}}/.first-time" ]
+    le: rm "{{nginx.prefix}}/.first-time"
+    rt: nginx:configure -overwrite true
+fi:
+
+rt: watchman:start
+le: nginx -V
 le: nginx {{nginx.args}}

@@ -1,22 +1,2 @@
-#! docker.tag:      pushcorn/nginx
-
-#! watchman.watches:  etc
-
-#[ watchman.watches:  etc
-#? $$$.path:          /etc/nginx
-#? $$$.trigger:       qd nginx:reload
-#]
-
-
-#= docker:build     qd docker:build --tag {{docker.tag}} --context "{{project.dir}}"
-#= docker:exec      qd docker:exec --container {{docker.tag}}
-#= docker:remove    qd docker:remove --name {{docker.tag}}
-#= docker:run       qd docker:run --image {{docker.tag}}
-#= docker:status    qd docker:status --name {{docker.tag}}
-#= docker:stop      qd docker:stop --name {{docker.tag}}
-
-#= docker:once      qd docker:run --image {{docker.tag}} --once true
-#= docker:rebuild   qd docker:build --tag {{docker.tag}} --context "{{project.dir}}" --cache false
-#= docker:shell     [[ " running exited " =~  " $(qd docker:status) " ]] \
-                        && qd docker:exec --command "qd :shell" \
-                        || qd docker:once --command :shell
+#! docker.tag:        pushcorn/nginx
+#! watchman.watches:  nginx

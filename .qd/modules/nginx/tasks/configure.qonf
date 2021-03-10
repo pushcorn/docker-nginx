@@ -1,36 +1,26 @@
-le: mountpoint /etc/nginx &> /dev/null || qd_error "The directory '/etc/nginx' was not mounted."
+ce: overwrite false
+se: nginx.tmp /tmp/nginx-{{|env (RANDOM)}}
 
-se: .init false
-## rt: watchman:stop
-le: mkdir /tmp/old /tmp/new
-le: mount -B /etc/nginx /tmp/old
+le: mkdir {{nginx.tmp}}
+le: cp -prf {{nginx.prefix}}/. {{nginx.tmp}}
 
-if: [ -z "$(ls /tmp/old)" ]
-    se: .init true
-    le: umount /etc/nginx && cp -prf /etc/nginx/* /tmp/new
-el:
-    le: cp -prf /tmp/old/* /tmp/new
+if: .true nginx.dhparam
+    le: [ -f "{{nginx.tmp}}/dhparam.pem" ] || openssl dhparam -out {{nginx.tmp}}/dhparam.pem 2048
 fi:
-
-le: mount -B /tmp/new /etc/nginx
-
-le: [ -f "/etc/nginx/dhparam.pem" ] || openssl dhparam -out /etc/nginx/dhparam.pem 2048
 
 #[ nginx.configs
 lq: render-template --source {{$$$.template}} \
-        --output /etc/nginx/{{$$$.output}} \
+        --output {{nginx.tmp}}/{{$$$.output}} \
         {{!nginx|env_to_data_args}} # $$
 #]
 
 #[ nginx.sites
 lq: render-template --source {{$$$.template}} \
-        --output /etc/nginx/sites-available/$$.conf \
+        --output {{nginx.tmp}}/sites-enabled/$$.conf \
         {{!nginx.sites.$$|env_to_data_args}} # $$
 
-lq: nginx:enable-site --name $$
-
-if: [ "{{$$$.https.enabled}}" = "true" ] && [ ! -f "/etc/nginx/certs/{{$$$.cert}}.crt" ]
-    le: mkdir -p /etc/nginx/certs && cd /etc/nginx/certs && ls -lFA /etc/nginx/certs
+if: [ "{{$$$.https.enabled}}" = "true" ] && [ ! -f "{{nginx.tmp}}/certs/{{$$$.cert}}.crt" ]
+    le: mkdir -p {{nginx.tmp}}/certs && cd {{nginx.tmp}}/certs
 
     if: .eq $$$.cert {{domain}}
         lq: openssl:create-cert --name "*.{{domain}}"
@@ -43,11 +33,11 @@ fi:
 #]
 
 hi:
-if: .true .init
+if: .true overwrite
     se: .apply true
 el:
     in: Checking configuration change...
-    if: qd_diff /tmp/old /tmp/new
+    if: qd_diff {{nginx.prefix}} {{nginx.tmp}}
         if: echo && qd_prompt "Do you want to update the configuration file(s)?" false
             se: .apply true
         fi:
@@ -57,9 +47,7 @@ el:
 fi:
 
 if: .true .apply
-    le: cp -prf /tmp/new/* /tmp/old
+    le: cp -prf {{nginx.tmp}}/. {{nginx.prefix}}
 fi:
 
-le: mount -B /tmp/old /etc/nginx && umount /tmp/old && rm -rf /tmp/{old,new}
-
-## rt: watchman:start
+le: rm -rf {{nginx.tmp}}

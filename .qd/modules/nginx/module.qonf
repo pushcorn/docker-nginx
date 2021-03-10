@@ -1,10 +1,12 @@
 #? nginx.args:        -g "daemon off;"
 #? nginx.cpus:        auto
+#? nginx.prefix:      /etc/nginx
+#? nginx.dhparam:     false
 
 #? nginx.includes.http:
 #? nginx.includes.root:
 
-#? nginx.configs: nginx errors {{nginx.configs.more}}
+#? nginx.configs: nginx errors
 
 #[ nginx.configs
 #? $$$.template:
@@ -19,7 +21,7 @@
 #? $$$.template:  nginx:error-pages.conf
 #]
 
-#? nginx.sites:           default {{nginx.sites.more}}
+#? nginx.sites:           default
 
 #[ nginx.sites:           default
 #? $$$.default:           true
@@ -28,7 +30,7 @@
 #]
 
 #[ nginx.sites
-#? $$$.template:          nginx:site-default.conf
+#? $$$.template:          nginx:site.conf
 #? $$$.domain:            {{domain}}
 #? $$$.default:           false
 #? $$$.fqdn:              $$.{{domain}}
@@ -40,9 +42,9 @@
 #? $$$.real.ip.from:      127.0.0.1
 #? $$$.headers:
 #? $$$.includes:
-#? $$$.https.enabled:     false
+#? $$$.https.enabled:     true
 #? $$$.https.hsts:        false
-#? $$$.https.redirect:    true
+#? $$$.https.redirect:    false
 #? $$$.https.port:        443
 #? $$$.https.http2:       true
 #? $$$.https.includes:    {{$$$.includes}}

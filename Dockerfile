@@ -14,17 +14,10 @@ RUN qd ubuntu:begin-apt-install \
         libnginx-mod-stream \
     && qd ubuntu:end-apt-install
 
-RUN mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.conf \
-    && cd /etc/nginx/sites-enabled/ \
-    && rm -f default \
-    && ln -s ../sites-available/default.conf . \
-    && cp /usr/share/nginx/modules-available/* /etc/nginx/modules-available/ \
-    && cd /etc/nginx/modules-enabled/ \
-    && rm -f ./* \
-    && ln -s ../modules-available/mod-http-echo.conf . \
-    && ln -s ../modules-available/mod-http-headers-more-filter.conf . \
-    && ln -s ../modules-available/mod-http-upstream-fair.conf . \
-    && ln -s ../modules-available/mod-stream.conf . \
+COPY .qd /root/.qd
+
+RUN mv /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default.conf \
+    && rm /etc/nginx/sites-enabled/default \
     && mv /var/www/html/index.nginx-debian.html /var/www/html/index.html \
     \
     && qd :install \
@@ -32,10 +25,9 @@ RUN mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.con
         --command render-template \
         --module watchman \
     && qd watchman:install \
+    && touch /etc/nginx/.first-time \
     && rm -rf /tmp/*
-
-COPY .qd /root/.qd
 
 EXPOSE 80 443
 
-CMD ["nginx:start"]
+CMD [":run-task", "--task", "nginx:start"]
