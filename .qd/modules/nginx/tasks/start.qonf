@@ -13,4 +13,4 @@ fi:
 
 rt: watchman:start
 le: nginx -V
-le: nginx {{nginx.args}}
+le: exec nginx {{nginx.args}}
