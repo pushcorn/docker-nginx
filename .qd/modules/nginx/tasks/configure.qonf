@@ -1,6 +1,6 @@
 op: overwrite bool "Whether to overwrite the existing config files."
 
-se: nginx.tmp /tmp/nginx-{{|env (RANDOM)}}
+se: nginx.tmp /tmp/nginx-$RANDOM
 
 le: mkdir {{nginx.tmp}}
 le: cp -prf {{nginx.etc}}/. {{nginx.tmp}}
@@ -10,14 +10,14 @@ if: .true nginx.dhparam
 fi:
 
 #[ nginx.configs
-lq: render-template --source {{$$$.template}} \
-        --output {{nginx.tmp}}/{{$$$.output}} \
+lq: render --source {{$$$.template}} \
+        --target {{nginx.tmp}}/{{$$$.target}} \
         {{!nginx|env_to_data_args}} # $$
 #]
 
 #[ nginx.sites
-lq: render-template --source {{$$$.template}} \
-        --output {{nginx.tmp}}/sites-enabled/$$.conf \
+lq: render --source {{$$$.template}} \
+        --target {{nginx.tmp}}/sites-enabled/$$.conf \
         {{!nginx.sites.$$|env_to_data_args}} # $$
 
 if: [ "{{$$$.https.enabled}}" = "true" ] && [ ! -f "{{nginx.tmp}}/certs/{{$$$.cert}}.crt" ]
@@ -35,12 +35,12 @@ fi:
 
 hi:
 if: .true overwrite
-    se: .apply true
+    so: .apply true
 el:
     in: Checking configuration change...
     if: qd_diff {{nginx.etc}} {{nginx.tmp}}
         if: echo && qd_prompt "Do you want to update the configuration file(s)?" false
-            se: .apply true
+            so: .apply true
         fi:
     el:
         le: echo "Configuration not changed."

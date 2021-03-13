@@ -1,2 +1,2 @@
-#! docker.tag:        pushcorn/nginx
-#! watchman.watches:  nginx
+#! docker.name: pushcorn/nginx
+#! watchman.watches: nginx

@@ -10,7 +10,7 @@
 
 #[ nginx.configs
 #? $$$.template:
-#? $$$.output:
+#? $$$.target:
 #]
 
 #[ nginx.configs  nginx
