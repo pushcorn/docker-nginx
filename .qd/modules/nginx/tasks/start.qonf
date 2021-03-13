@@ -1,11 +1,3 @@
-#[ .data.dirs: {{nginx.etc}} /var/www/html
-if: [ -z "$(ls $$)" ]
-    le: mount -B $$ /mnt && umount $$
-    le: cp -prf $$/. /mnt
-    le: mount -B /mnt $$ && umount /mnt
-fi:
-#]
-
 if: [ -f "{{nginx.etc}}/.first-time" ]
     le: rm "{{nginx.etc}}/.first-time"
     rt: nginx:configure -overwrite true
