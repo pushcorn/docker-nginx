@@ -1,2 +1,2 @@
-#! docker.name: pushcorn/nginx
+#! docker.name: pushcorn/nginx:1.18-ubuntu20.04
 #! watchman.watches: nginx

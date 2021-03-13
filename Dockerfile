@@ -1,8 +1,8 @@
-FROM pushcorn/ubuntu:latest
+FROM pushcorn/ubuntu:20.04
 
 LABEL maintainer="joseph@pushcorn.com"
 
-ARG NGINX_VERSION=*
+ARG NGINX_VERSION=1.18.*
 ARG BUILD_ID=NA
 
 ENV BUILD_ID=$BUILD_ID
