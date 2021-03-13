@@ -9,17 +9,17 @@ describe_command ()
 describe_command_options ()
 {
     qd_describe_command_option "name" "string" "The site name." true
-    qd_describe_command_option "prefix" "string" "The directory prefix." true "$QDS_NGINX_PREFIX"
+    qd_describe_command_option "etc" "string" "The config directory." true "$QDS_NGINX_ETC"
 }
 
 
 run_command ()
 {
     local name=$QDC_NAME
-    local file=$QDC_PREFIX/sites-available/$name.conf
+    local file=$QDC_ETC/sites-available/$name.conf
 
     if [ -f "$file" ]; then
-        mv $file $QDC_PREFIX/sites-enabled/$name.conf
+        mv $file $QDC_ETC/sites-enabled/$name.conf
     else
         qd_error "Site '$name' is not defined."
     fi

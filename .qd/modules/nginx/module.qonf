@@ -1,6 +1,6 @@
 #? nginx.args:        -g "daemon off;"
 #? nginx.cpus:        auto
-#? nginx.prefix:      /etc/nginx
+#? nginx.etc:         /etc/nginx
 #? nginx.dhparam:     false
 
 #? nginx.includes.http:

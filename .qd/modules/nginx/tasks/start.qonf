@@ -1,4 +1,4 @@
-#[ .data.dirs: {{nginx.prefix}} /var/www/html
+#[ .data.dirs: {{nginx.etc}} /var/www/html
 if: [ -z "$(ls $$)" ]
     le: mount -B $$ /mnt && umount $$
     le: cp -prf $$/. /mnt
@@ -6,11 +6,11 @@ if: [ -z "$(ls $$)" ]
 fi:
 #]
 
-if: [ -f "{{nginx.prefix}}/.first-time" ]
-    le: rm "{{nginx.prefix}}/.first-time"
+if: [ -f "{{nginx.etc}}/.first-time" ]
+    le: rm "{{nginx.etc}}/.first-time"
     rt: nginx:configure -overwrite true
 fi:
 
 rt: watchman:start
 le: nginx -V
-le: exec nginx {{nginx.args}}
+le: nginx {{nginx.args}}

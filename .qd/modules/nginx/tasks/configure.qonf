@@ -1,8 +1,9 @@
-ce: overwrite false
+op: overwrite bool "Whether to overwrite the existing config files."
+
 se: nginx.tmp /tmp/nginx-{{|env (RANDOM)}}
 
 le: mkdir {{nginx.tmp}}
-le: cp -prf {{nginx.prefix}}/. {{nginx.tmp}}
+le: cp -prf {{nginx.etc}}/. {{nginx.tmp}}
 
 if: .true nginx.dhparam
     le: [ -f "{{nginx.tmp}}/dhparam.pem" ] || openssl dhparam -out {{nginx.tmp}}/dhparam.pem 2048
@@ -37,7 +38,7 @@ if: .true overwrite
     se: .apply true
 el:
     in: Checking configuration change...
-    if: qd_diff {{nginx.prefix}} {{nginx.tmp}}
+    if: qd_diff {{nginx.etc}} {{nginx.tmp}}
         if: echo && qd_prompt "Do you want to update the configuration file(s)?" false
             se: .apply true
         fi:
@@ -47,7 +48,7 @@ el:
 fi:
 
 if: .true .apply
-    le: cp -prf {{nginx.tmp}}/. {{nginx.prefix}}
+    le: cp -prf {{nginx.tmp}}/. {{nginx.etc}}
 fi:
 
 le: rm -rf {{nginx.tmp}}

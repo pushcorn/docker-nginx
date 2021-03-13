@@ -1,4 +1,4 @@
 #[ watchman.watches:  nginx
-#? $$$.path:          {{nginx.prefix}}
+#? $$$.path:          {{nginx.etc}}
 #? $$$.trigger:       qd nginx:reload
 #]
