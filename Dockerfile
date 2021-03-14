@@ -3,9 +3,6 @@ FROM pushcorn/ubuntu:latest
 LABEL maintainer="joseph@pushcorn.com"
 
 ARG NGINX_VERSION=*
-ARG NGINX_BUILD_ID=NA
-
-ENV BUILD_ID=$NGINX_BUILD_ID
 
 RUN qd ubuntu:begin-apt-install \
     && qd ubuntu:add-ppa-repo --package nginx/stable \
@@ -21,10 +18,7 @@ RUN mv /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default.conf 
     && rm /etc/nginx/sites-enabled/default \
     && mv /var/www/html/index.nginx-debian.html /var/www/html/index.html \
     \
-    && qd :install \
-        --module openssl \
-        --module watchman \
-    && qd watchman:install \
+    && qd :install --module openssl \
     && touch /etc/nginx/.first-time \
     && rm -rf /tmp/*
 
