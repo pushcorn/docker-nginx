@@ -3,9 +3,9 @@ FROM pushcorn/ubuntu:latest
 LABEL maintainer="joseph@pushcorn.com"
 
 ARG NGINX_VERSION=*
-ARG BUILD_ID=NA
+ARG NGINX_BUILD_ID=NA
 
-ENV BUILD_ID=$BUILD_ID
+ENV BUILD_ID=$NGINX_BUILD_ID
 
 RUN qd ubuntu:begin-apt-install \
     && qd ubuntu:add-ppa-repo --package nginx/stable \
