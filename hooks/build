@@ -1,7 +1,7 @@
 #!/bin/bash
 
-mkdir -p root.build/root/.qd/
+mkdir -p root.build/root/
 
-echo "BUILD_ID=$(git log -1 --date=short --format="%ad-%h")" > root.build/root/.qd/.env.local
+echo "BUILD_ID=$(git log -1 --date=short --format="%ad-%h")" > root.build/root/.env.local
 
 docker build -f $DOCKERFILE_PATH -t $IMAGE_NAME .
