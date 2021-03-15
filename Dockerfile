@@ -12,17 +12,14 @@ RUN qd ubuntu:begin-apt-install \
         libnginx-mod-http-headers-more-filter \
         libnginx-mod-http-upstream-fair \
         libnginx-mod-stream \
-    && qd ubuntu:end-apt-install
-
-RUN mv /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default.conf \
+    && qd ubuntu:end-apt-install \
+    \
+    mv /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default.conf \
     && rm /etc/nginx/sites-enabled/default \
     && mv /var/www/html/index.nginx-debian.html /var/www/html/index.html \
     \
     && qd :install --module openssl \
-    && touch /etc/nginx/.first-time \
-    && rm -rf /tmp/*
-
-COPY .qd /root/.qd
+    && touch /etc/nginx/.first-time
 
 EXPOSE 80 443
 
