@@ -1,8 +1,8 @@
-FROM pushcorn/ubuntu:latest
+FROM pushcorn/ubuntu:20.04
 
 LABEL maintainer="joseph@pushcorn.com"
 
-ARG NGINX_VERSION=*
+ARG NGINX_VERSION=1.18.*
 
 RUN qd ubuntu:begin-apt-install \
     && qd ubuntu:add-ppa-repo --package nginx/stable \
