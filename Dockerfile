@@ -18,8 +18,7 @@ RUN qd ubuntu:begin-apt-install \
     && rm /etc/nginx/sites-enabled/default \
     && mv /var/www/html/index.nginx-debian.html /var/www/html/index.html \
     \
-    && qd :install --module openssl \
-    && touch /etc/nginx/.first-time
+    && qd :install --module openssl
 
 EXPOSE 80 443
 

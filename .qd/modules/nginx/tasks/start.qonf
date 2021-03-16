@@ -1,8 +1,4 @@
-if: [ -f "{{nginx.etc}}/.first-time" ]
-    le: rm "{{nginx.etc}}/.first-time"
-    rt: nginx:configure -overwrite true
-fi:
-
+rt: nginx:configure -overwrite true
 rt: watchman:start
 le: nginx -V
 le: nginx {{nginx.args}}

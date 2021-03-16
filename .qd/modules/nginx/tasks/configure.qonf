@@ -1,12 +1,11 @@
 op: overwrite bool "Whether to overwrite the existing config files."
 
-se: nginx.tmp /tmp/nginx-$RANDOM
-
-le: mkdir {{nginx.tmp}}
+se: nginx.tmp $(qd_mktemp_dir)
 le: cp -prf {{nginx.etc}}/. {{nginx.tmp}}
+se: .old.files "$(ls {{nginx.tmp}})"
 
 if: .true nginx.dhparam
-    le: [ -f "{{nginx.tmp}}/dhparam.pem" ] || openssl dhparam -out {{nginx.tmp}}/dhparam.pem 2048
+    le: [ -f "{{nginx.tmp}}/dhparam.pem" ] || cd {{nginx.tmp}} && qd openssl:generate-dhparam
 fi:
 
 #[ nginx.configs
@@ -34,21 +33,14 @@ fi:
 #]
 
 hi:
-if: .true overwrite
-    so: .apply true
-el:
-    in: Checking configuration change...
-    if: qd_diff {{nginx.etc}} {{nginx.tmp}}
-        if: echo && qd_prompt "Do you want to update the configuration file(s)?" false
-            so: .apply true
-        fi:
-    el:
-        le: echo "Configuration not changed."
+if: [ -n "{{.old.files}}" ] && qd_diff {{nginx.etc}} {{nginx.tmp}}
+    if: ! {{overwrite}} && echo && qd_prompt "Do you want to update the configuration files?"
+        so: overwrite true
     fi:
 fi:
 
-if: .true .apply
+if: .true overwrite
     le: cp -prf {{nginx.tmp}}/. {{nginx.etc}}
 fi:
 
-le: rm -rf {{nginx.tmp}}
+le: rm -rf $QD_TMP_DIR/*
