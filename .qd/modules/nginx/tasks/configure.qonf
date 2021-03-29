@@ -1,8 +1,8 @@
 op: overwrite bool "Whether to overwrite the existing config files."
 
-se: nginx.tmp $(qd_mktemp_dir)
+se: nginx.tmp qd_mktemp_dir
 le: cp -prf {{nginx.etc}}/. {{nginx.tmp}}
-se: .old.files "$(ls {{nginx.tmp}})"
+se: .old.files ls {{nginx.tmp}}
 
 if: .true nginx.dhparam
     le: [ -f "{{nginx.tmp}}/dhparam.pem" ] || cd {{nginx.tmp}} && qd openssl:generate-dhparam
@@ -42,5 +42,3 @@ fi:
 if: .true overwrite
     le: cp -prf {{nginx.tmp}}/. {{nginx.etc}}
 fi:
-
-le: rm -rf $QD_TMP_DIR/*

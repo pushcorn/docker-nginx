@@ -22,4 +22,4 @@ RUN qd ubuntu:begin-apt-install \
 
 EXPOSE 80 443
 
-CMD [":run-task", "--task", "init,nginx:start"]
+CMD [":run-task", "--task", "start,nginx:start"]
