@@ -9,13 +9,13 @@ if: .true nginx.dhparam
 fi:
 
 #[ nginx.configs
-lq: render --source {{$$$.template}} \
+lq: :render --source {{$$$.template}} \
         --target {{nginx.tmp}}/{{$$$.target}} \
         {{!nginx|env_to_data_args}} # $$
 #]
 
 #[ nginx.sites
-lq: render --source {{$$$.template}} \
+lq: :render --source {{$$$.template}} \
         --target {{nginx.tmp}}/sites-enabled/$$.conf \
         {{!nginx.sites.$$|env_to_data_args}} # $$
 
