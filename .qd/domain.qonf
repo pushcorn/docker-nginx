@@ -1,2 +1,9 @@
-#! docker.name: pushcorn/nginx:1.18-ubuntu20.04
-#! nginx.etc: /etc/nginx
+#! docker.name:   pushcorn/nginx:1.18-ubuntu20.04
+#! nginx.etc:     /etc/nginx
+
+#! watchman.watches:  nginx
+
+#[ watchman.watches   nginx
+#? $$$.path:          {{nginx.etc}}
+#? $$$.trigger:       qd nginx:reload
+#]
