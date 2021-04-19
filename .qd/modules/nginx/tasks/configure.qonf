@@ -1,6 +1,7 @@
 op: overwrite bool "Whether to overwrite the existing config files."
 
 se: nginx.tmp qd_mktemp_dir
+le: rm -rf {{nginx.etc}}/conf.d
 le: cp -prf {{nginx.etc}}/. {{nginx.tmp}}
 se: .old.files ls {{nginx.tmp}}
 
@@ -14,27 +15,51 @@ lq: :render --source {{$$$.template}} \
         {{!nginx|env_to_data_args}} # $$
 #]
 
+le: mkdir -p {{nginx.tmp}}/{certs,confs,streams,proxies}
+cd: {{nginx.tmp}}/certs
+
+
 #[ nginx.sites
+if: .true $$$.ssl
+    if: .asset $$$.cert
+        le: cp -f "{{$$$.cert|qd (asset_path)}}" .
+        le: cp -f "{{$$$.key|qd (asset_path)}}" .
+        lq: openssl:view-cert --cert "{{$$$.cert|qd (asset_path)|exec (basename)}}"
+    el:
+        if: .eq $$$.fqdn {{domain}}
+            lq: openssl:create-cert --name "*.{{domain}}"
+        el:
+            lq: openssl:create-cert --name {{$$$.fqdn}}
+        fi:
+
+        sv: $$$.cert $PWD/{{$$$.fqdn}}.crt
+        sv: $$$.key $PWD/{{$$$.fqdn}}.key
+    fi:
+fi:
+
 lq: :render --source {{$$$.template}} \
         --target {{nginx.tmp}}/sites-enabled/$$.conf \
-        {{!nginx.sites.$$|env_to_data_args}} # $$
-
-if: [ "{{$$$.https.enabled}}" = "true" ] && [ ! -f "{{nginx.tmp}}/certs/{{$$$.cert}}.crt" ]
-    le: mkdir -p {{nginx.tmp}}/certs && cd {{nginx.tmp}}/certs
-
-    if: .eq $$$.cert {{domain}}
-        lq: openssl:create-cert --name "*.{{domain}}"
-    el:
-        lq: openssl:create-cert --name {{$$$.cert}}
-    fi:
-el:
-    in: Certificate {{$$$.cert}} exists.
-fi:
+        --data.name $$ \
+        {{!nginx.sites.$$|env_to_data_args}} # site $$
 #]
 
-hi:
-if: [ -n "{{.old.files}}" ] && qd_diff {{nginx.etc}} {{nginx.tmp}}
-    if: ! {{overwrite}} && echo && qd_prompt "Do you want to update the configuration files?"
+#[ nginx.streams
+lq: :render --source {{$$$.template}} \
+        --target {{nginx.tmp}}/streams/$$.conf \
+        --data.name $$ \
+        {{!nginx.streams.$$|env_to_data_args}} # stream $$
+#]
+
+#[ nginx.proxies
+lq: :render --source {{$$$.template}} \
+        --target {{nginx.tmp}}/proxies/$$.conf \
+        --data.name $$ \
+        {{!nginx.proxies.$$|env_to_data_args}} # proxy $$
+#]
+
+if: [ -n "{{.old.files}}" ]
+    le: qd_diff {{nginx.etc}} {{nginx.tmp}} || true
+    if: {{action.has.result}} && ! {{overwrite}} && echo && qd_prompt "Do you want to update the configuration files?"
         so: overwrite true
     fi:
 fi:

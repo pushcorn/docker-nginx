@@ -26,7 +26,6 @@
 #[ nginx.sites:           default
 #? $$$.default:           true
 #? $$$.fqdn:              {{domain}}
-#? $$$.cert:              {{domain}}
 #]
 
 #[ nginx.sites
@@ -34,7 +33,8 @@
 #? $$$.domain:            {{domain}}
 #? $$$.default:           false
 #? $$$.fqdn:              $$.{{domain}}
-#? $$$.cert:              {{$$$.fqdn}}
+#? $$$.cert:              {{nginx.etc}}/certs/{{$$$.fqdn}}.crt
+#? $$$.key:               {{nginx.etc}}/certs/{{$$$.fqdn}}.key
 #? $$$.port:              80
 #? $$$.root:              /var/www/html
 #? $$$.index:             index.html
@@ -42,24 +42,39 @@
 #? $$$.real.ip.from:      127.0.0.1
 #? $$$.headers:
 #? $$$.includes:
-#? $$$.https.enabled:     true
-#? $$$.https.hsts:        false
-#? $$$.https.redirect:    false
-#? $$$.https.port:        443
-#? $$$.https.http2:       true
-#? $$$.https.includes:    {{$$$.includes}}
-#? $$$.https.headers:     {{$$$.headers}}
+#? $$$.ssl:               true
+#? $$$.ssl.hsts:          false
+#? $$$.ssl.redirect:      false
+#? $$$.ssl.port:          443
+#? $$$.ssl.http2:         true
+#? $$$.ssl.includes:      {{$$$.includes}}
+#? $$$.ssl.headers:       {{$$$.headers}}
 #]
-
-#? nginx.stream.port:           80
-#? nginx.stream.https.port:     443
-#? nginx.stream.proxy.protocol: false
 
 #? nginx.streams:
 
 #[ nginx.streams
-#? $$$.from:
-#? $$$.to:
-#? $$$.https.from:
-#? $$$.https.to:
+#? $$$.template:        nginx:stream.conf
+#? $$$.resolver:
+#? $$$.from.fqdn:
+#? $$$.from.port:
+#? $$$.from.ssl:
+#? $$$.to.fqdn:
+#? $$$.to.port:
+#? $$$.proxy.protocol: false
+#]
+
+#? nginx.proxies:
+
+#[ nginx.proxies
+#? $$$.template:        nginx:proxy.conf
+#? $$$.from.fqdn:
+#? $$$.from.port:
+#? $$$.from.ssl:        false
+#? $$$.to.fqdn:
+#? $$$.to.port:
+#? $$$.to.ssl:          false
+#? $$$.cert:
+#? $$$.key:
+#? $$$.resolver:
 #]
