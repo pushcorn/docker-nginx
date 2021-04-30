@@ -6,19 +6,17 @@
 #? nginx.includes.http:
 #? nginx.includes.root:
 
-#? nginx.configs: nginx errors
+#? nginx.configs: nginx error-pages
 
 #[ nginx.configs
-#? $$$.template:
+#? $$$.template:  nginx:$$.conf
+
+## If target is not set, it'll be put into {{nginx.etc}}/confs/ directory.
 #? $$$.target:
 #]
 
-#[ nginx.configs  nginx
-#? $$$.template:  nginx:nginx.conf
-#]
-
-#[ nginx.configs  errors
-#? $$$.template:  nginx:error-pages.conf
+#[ nginx.configs          nginx
+#? $$$.target:            nginx.conf
 #]
 
 #? nginx.sites:           default
@@ -42,6 +40,7 @@
 #? $$$.real.ip.from:      127.0.0.1
 #? $$$.headers:
 #? $$$.includes:
+#? $$$.configs:
 #? $$$.ssl:               true
 #? $$$.ssl.hsts:          false
 #? $$$.ssl.redirect:      false
@@ -49,6 +48,11 @@
 #? $$$.ssl.http2:         true
 #? $$$.ssl.includes:      {{$$$.includes}}
 #? $$$.ssl.headers:       {{$$$.headers}}
+
+#[ $$$.configs
+#? $$$.template:          nginx:$$.conf
+#? $$$.target:
+#]
 #]
 
 #? nginx.streams:

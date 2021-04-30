@@ -9,15 +9,15 @@ if: .true nginx.dhparam
     le: [ -f "{{nginx.tmp}}/dhparam.pem" ] || cd {{nginx.tmp}} && qd openssl:generate-dhparam
 fi:
 
+le: mkdir -p {{nginx.tmp}}/{certs,confs,streams,proxies}
+
 #[ nginx.configs
 lq: :render --source {{$$$.template}} \
-        --target {{nginx.tmp}}/{{$$$.target}} \
+        --target {{nginx.tmp}}/{{#+ $$$.target}}{{.}}{{:}}confs/{{/}} \
         {{!nginx|env_to_data_args}} # $$
 #]
 
-le: mkdir -p {{nginx.tmp}}/{certs,confs,streams,proxies}
 cd: {{nginx.tmp}}/certs
-
 
 #[ nginx.sites
 if: .true $$$.ssl
@@ -41,6 +41,13 @@ lq: :render --source {{$$$.template}} \
         --target {{nginx.tmp}}/sites-enabled/$$.conf \
         --data.name $$ \
         {{!nginx.sites.$$|env_to_data_args}} # site $$
+
+    #[ $$$.configs
+    lq: :render --source {{$$$.template}} \
+            --target {{nginx.tmp}}/{{#+ $$$.target}}{{.}}{{:}}confs/{{/}} \
+            --data.name $$ \
+            {{!nginx.sites.$$..|env_to_data_args}} # site config $$
+    #]
 #]
 
 #[ nginx.streams
